@@ -67,6 +67,24 @@ Window
                 }
             }
 
+            // Settings item: Enable kp3s checkbox
+            RowLayout
+            {
+                spacing: UM.Theme.getSize("wide_margin").width
+                width: parent.width
+
+                // Checkbox
+                UM.CheckBox
+                {
+                    id: kp3sThumbnailsEnabled
+                    objectName: "kp3sThumbnailsEnabled"
+                    checked: settings.kp3s_thumbnails_enabled
+                    onClicked: settings.set_kp3s_thumbnails_enabled(kp3sThumbnailsEnabled.checked)
+                    text: "Enable kp3s thumbnails"
+                    tooltip: "kp3s thumbnails will be added when saving a G-code file"
+                }
+            }
+
             // Settings item: Enable klipper checkbox
             RowLayout
             {

@@ -7,6 +7,8 @@ from typing import Optional
 from PyQt6.QtCore import QObject, pyqtSlot, pyqtProperty
 from PyQt6.QtQuick import QQuickItem, QQuickWindow
 
+from UM.i18n import i18nCatalog
+from UM.Message import Message
 from UM.Extension import Extension
 from UM.Logger import Logger
 from cura.CuraApplication import CuraApplication
@@ -52,8 +54,8 @@ class SettingsTranslator(QObject):
         if self._popup:
             self._popup.findChild(QQuickItem, "thumbnailsEnabled") \
                 .setProperty("checked", SettingsManager.get_settings().thumbnails_enabled)
-            self._popup.findChild(QQuickItem, "KP3SthumbnailsEnabled") \
-                .setProperty("checked", SettingsManager.get_settings().KP3S_thumbnails_enabled)
+            self._popup.findChild(QQuickItem, "kp3sThumbnailsEnabled") \
+                .setProperty("checked", SettingsManager.get_settings().kp3s_thumbnails_enabled)
             self._popup.findChild(QQuickItem, "klipperThumbnailsEnabled") \
                 .setProperty("checked", SettingsManager.get_settings().klipper_thumbnails_enabled)
             self._popup.findChild(QQuickItem, "printerModel") \
@@ -85,6 +87,20 @@ class SettingsTranslator(QObject):
             # Update preview
             self.render_thumbnail()
 
+    # kp3s thumbnails enabled state
+
+    @pyqtProperty(bool)
+    def kp3s_thumbnails_enabled(self) -> bool:
+        return SettingsManager.get_settings().kp3s_thumbnails_enabled
+
+    @pyqtSlot(bool)
+    def set_kp3s_thumbnails_enabled(self, enabled: bool) -> None:
+        updated: bool = SettingsManager.get_settings().kp3s_thumbnails_enabled != enabled
+        SettingsManager.get_settings().kp3s_thumbnails_enabled = enabled
+        if updated:
+            # Update preview
+            self.render_thumbnail()
+
     # Klipper thumbnails enabled state
 
     @pyqtProperty(bool)
@@ -95,20 +111,6 @@ class SettingsTranslator(QObject):
     def set_klipper_thumbnails_enabled(self, enabled: bool) -> None:
         updated: bool = SettingsManager.get_settings().klipper_thumbnails_enabled != enabled
         SettingsManager.get_settings().klipper_thumbnails_enabled = enabled
-        if updated:
-            # Update preview
-            self.render_thumbnail()
-
-    # KP3S thumbnails enabled state
-
-    @pyqtProperty(bool)
-    def KP3S_thumbnails_enabled(self) -> bool:
-        return SettingsManager.get_settings().KP3S_thumbnails_enabled
-
-    @pyqtSlot(bool)
-    def set_KP3S_thumbnails_enabled(self, enabled: bool) -> None:
-        updated: bool = SettingsManager.get_settings().KP3S_thumbnails_enabled != enabled
-        SettingsManager.get_settings().KP3S_thumbnails_enabled = enabled
         if updated:
             # Update preview
             self.render_thumbnail()
@@ -221,6 +223,7 @@ class GUIManager(QObject):
         # Initialize gui if not exists
         if self._popup is None and not self.init_gui():
             Logger.log("e", "Failed to create ElegooNeptuneThumbnails settings window.")
+            Message('Failed to create ElegooNeptuneThumbnails settings window.', title = i18nCatalog("cura").i18nc("@info:title", "Thumbnail Generator")).show()
 
         if self._popup is not None:
             # Update gui and show

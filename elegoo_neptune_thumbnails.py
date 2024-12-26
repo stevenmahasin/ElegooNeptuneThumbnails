@@ -65,7 +65,9 @@ class ElegooNeptune3Thumbnails(Extension):
             StatisticsSender.send_statistics()
 
         # Cancel if thumbnail is disabled
-        if not SettingsManager.get_settings().thumbnails_enabled and not SettingsManager.get_settings().klipper_thumbnails_enabled:
+        if not SettingsManager.get_settings().thumbnails_enabled and \
+           not SettingsManager.get_settings().kp3s_thumbnails_enabled and \
+           not SettingsManager.get_settings().klipper_thumbnails_enabled:
             return
 
         # Return if there is no G-code
@@ -141,6 +143,8 @@ class ElegooNeptune3Thumbnails(Extension):
             # Check if thumbnail is already present
             if SettingsManager.get_settings().thumbnails_enabled and (";gimage:" in g_code or ";simage:" in g_code):
                 thumbnail_segments.append(i)
+            elif SettingsManager.get_settings().kp3s_thumbnails_enabled and "; thumbnail begin " in g_code:
+                thumbnail_segments.append(i)
             elif SettingsManager.get_settings().klipper_thumbnails_enabled and "; thumbnail begin " in g_code:
                 thumbnail_segments.append(i)
 
@@ -185,6 +189,11 @@ class ElegooNeptune3Thumbnails(Extension):
         if SettingsManager.get_settings().thumbnails_enabled:
             thumbnail_prefix: str = ThumbnailGenerator.generate_gcode_prefix(slice_data=slice_data)
             self.scene.gcode_dict[0].append(thumbnail_prefix)
+
+        # Add kp3s thumbnails if enabled
+        if SettingsManager.get_settings().kp3s_thumbnails_enabled:
+            kp3s_thumbnail_prefix: str = ThumbnailGenerator.generate_kp3s_thumbnail_gcode(slice_data=slice_data)
+            self.scene.gcode_dict[0].append(kp3s_thumbnail_prefix)
 
         # Add klipper thumbnails if enabled
         if SettingsManager.get_settings().klipper_thumbnails_enabled:

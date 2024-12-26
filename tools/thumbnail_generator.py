@@ -100,6 +100,28 @@ class ThumbnailGenerator:
         return gcode_prefix
 
     @classmethod
+    def generate_kp3s_thumbnail_gcode(cls, slice_data: SliceData) -> str:
+        """
+        Generate kp3s thumbnail gcode for thumbnails in size 100x100
+        """
+        rendered_icon: QImage = cls._render_thumbnail(slice_data=slice_data, is_preview=False, add_background=False)
+        medium_icon = rendered_icon.scaled(100,100)
+        g_code: str = "\r"
+
+        byte_array: QByteArray = QByteArray()
+        byte_buffer: QBuffer = QBuffer(byte_array)
+        byte_buffer.open(QIODeviceBase.OpenModeFlag.WriteOnly)
+        medium_icon.save(byte_buffer, "PNG")
+        base64_string: str = str(byte_array.toBase64().data(), "UTF-8")
+        g_code += f"; thumbnail begin {medium_icon.width()}x{medium_icon.height()} {len(base64_string)}\r"
+        while base64_string:
+            g_code += f"; {base64_string[0:cls.KLIPPER_THUMBNAIL_BLOCK_SIZE]}\r"
+            base64_string = base64_string[cls.KLIPPER_THUMBNAIL_BLOCK_SIZE:]
+        g_code += "; thumbnail end\r\r"
+
+        return g_code
+
+    @classmethod
     def generate_klipper_thumbnail_gcode(cls, slice_data: SliceData) -> str:
         """
         Generate klipper thumbnail gcode for thumbnails in sizes 32x32 and 300x300
@@ -128,7 +150,7 @@ class ThumbnailGenerator:
         """
         # Create background
         is_light_background: bool = False
-        background: QImage = QImage(900, 900, QImage.Format.Format_RGBA8888)
+        background: QImage = QImage(100, 100, QImage.Format.Format_RGBA8888)
         if add_background:
             if SettingsManager.get_settings().is_old_thumbnail():
                 painter = QPainter(background)
@@ -150,21 +172,25 @@ class ThumbnailGenerator:
 
         # Create foreground
         foreground: QImage
-        if not SettingsManager.get_settings().thumbnails_enabled and not SettingsManager.get_settings().klipper_thumbnails_enabled:
+        if not SettingsManager.get_settings().thumbnails_enabled and \
+           not SettingsManager.get_settings().kp3s_thumbnails_enabled and \
+           not SettingsManager.get_settings().klipper_thumbnails_enabled:
             foreground = QImage(cls.NO_FOREGROUND_IMAGE_PATH)
         elif SettingsManager.get_settings().use_current_model or not is_preview:
-            foreground = cls._take_snapshot(width=600, height=600)
+            foreground = cls._take_snapshot(width=70, height=70)
         else:
             foreground = QImage(cls.FOREGROUND_IMAGE_PATH)
 
         # Paint foreground on background
         if foreground:
             painter = QPainter(background)
-            painter.drawImage(150, 160, foreground)
+            painter.drawImage(15, 15, foreground)
             painter.end()
 
         # Don't add options if thumbnails disabled
-        if not SettingsManager.get_settings().thumbnails_enabled and not SettingsManager.get_settings().klipper_thumbnails_enabled:
+        if not SettingsManager.get_settings().thumbnails_enabled and \
+           not SettingsManager.get_settings().kp3s_thumbnails_enabled and \
+           not SettingsManager.get_settings().klipper_thumbnails_enabled:
             return background
 
         # Generate option lines
@@ -172,7 +198,7 @@ class ThumbnailGenerator:
 
         # Add options
         painter = QPainter(background)
-        font = QFont("Arial", 60)
+        font = QFont("Arial", 10)
         painter.setFont(font)
         if is_light_background:
             painter.setPen(cls.COLORS["darker_gray"])
@@ -182,8 +208,10 @@ class ThumbnailGenerator:
             if line:
                 left: bool = i % 2 == 0
                 top: bool = i < 2
-                painter.drawText(30 if left else 470,
-                                 20 if top else 790, 400, 100,
+                painter.drawText(2 if left else 50,     #x
+                                 2 if top else 84,      #y
+                                 80,                    #width
+                                 15,                    #height
                                  (Qt.AlignmentFlag.AlignLeft if left else Qt.AlignmentFlag.AlignRight) +
                                  Qt.AlignmentFlag.AlignVCenter, line)
         painter.end()
