@@ -1,21 +1,15 @@
-# Elegoo Neptune Thumbnails Plugin For Cura
+# Kingroon KP3S Thumbnails Plugin For Cura
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-
-Sponsored by \
-<a href="https://elegoo.sjv.io/enthumbs"><img src="readme_images/sponsor_elegoo.png" width="150"></a>
 
 ## Support This Project
 
 If you like this plugin, consider supporting me :)
 
-[![Buy Me A Coffee](https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=&slug=molodos&button_colour=5F7FFF&font_colour=ffffff&font_family=Comic&outline_colour=000000&coffee_colour=FFDD00&id=11)](https://www.buymeacoffee.com/molodos)
-
 ## General Info
 
-> **You are a printer manufacturer and want your printer to be supported?**\
-> Feel free to contact me via email: `realmolodos@gmail.com` (**Manufacturers only** - else open an issue here on
-> GitHub)
+This project is forked from https://github.com/Molodos/ElegooNeptuneThumbnails
+This fork reformats the extension to be readable by Kingroon KP3S display.
 
 Cura 5.X (Cura 4.X is **not** supported) plugin for adding gcode thumbnail images for Elegoo Neptune printers. The
 following models are supported (for other models, see [FAQ](#faq)):
