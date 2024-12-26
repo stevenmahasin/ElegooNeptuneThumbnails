@@ -1,0 +1,6 @@
+[submodule "cura"]
+    path = submodules\Cura
+    url = https://github.com/Ultimaker/Cura
+[submodule "Uranium"]
+    path = submodules\Uranium
+    url = https://github.com/Ultimaker/Uranium

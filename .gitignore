@@ -3,8 +3,10 @@ venv/
 .vscode/
 *.iml
 
-UM/
-cura/
+UM
+cura
+submodules/Cura/
+submodules/Uranium/
 
 __pycache__/
 *.py[cod]
