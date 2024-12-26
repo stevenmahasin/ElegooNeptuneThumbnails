@@ -60,6 +60,7 @@ class Settings:
         self.statistics_enabled: bool = True
         self.use_current_model: bool = False
         self.klipper_thumbnails_enabled: bool = True
+        self.KP3S_thumbnails_enabled: bool = True
 
     def get_printer_model_id(self) -> str:
         """
@@ -128,6 +129,7 @@ class Settings:
         self.statistics_enabled = data.get("statistics_enabled", True)
         self.use_current_model = data.get("use_current_model", False)
         self.klipper_thumbnails_enabled = data.get("klipper_thumbnails_enabled", True)
+        self.KP3S_thumbnails_enabled = data.get("KP3S_thumbnails_enabled", True)
 
     def to_json(self) -> dict[str, Any]:
         """
@@ -139,7 +141,8 @@ class Settings:
             "corner_options": self.get_corner_option_ids(),
             "statistics_enabled": self.statistics_enabled,
             "use_current_model": self.use_current_model,
-            "klipper_thumbnails_enabled": self.klipper_thumbnails_enabled
+            "klipper_thumbnails_enabled": self.klipper_thumbnails_enabled,
+            "KP3S_thumbnails_enabled": self.KP3S_thumbnails_enabled
         }
 
 
@@ -187,6 +190,7 @@ class SettingsManager:
             cls._settings.statistics_enabled = True
             cls._settings.use_current_model = False
             cls._settings.klipper_thumbnails_enabled = True
+            cls._settings.KP3S_thumbnails_enabled = True
 
             # Try to recognize current printer model
             active_machine: Optional[GlobalStack] = Application.getInstance().getMachineManager().activeMachine
